@@ -17,7 +17,11 @@
   },
   "homepage": "https://github.com/Zerapium/Hackathon-Nirman-2023-Backend#readme",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.0.3",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "firebase": "^7.13.1",
+    "socket.io": "^4.6.0",
+    "ws": "^8.12.1"
   }
 }
