@@ -21,5 +21,5 @@ app.use(function (req, res, next) {
 app.use("/t",require("./routes/login") );
 
 app.listen(process.env.PORT, () => {
-    console.log('The application is listening on port 5000!');
+    console.log(`The application is running on ${process.env.PORT}`);
 })
