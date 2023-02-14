@@ -1,6 +1,5 @@
-
-const express =  require("express");
-require('dotenv').config({path: __dirname + '/.env'})
+const express = require("express");
+require("dotenv").config({ path: __dirname + "/.env" });
 const app = express();
 var http = require('http').createServer(app);
 const router = express.Router();
@@ -19,19 +18,26 @@ const {
 
 app.use(express.json());
 
+
 app.use(function (req, res, next) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
 
-    res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+  );
 
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With,content-type,auth-token"
+  );
 
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,auth-token');
+  res.setHeader("Access-Control-Allow-Credentials", 1);
 
-    res.setHeader('Access-Control-Allow-Credentials', 1);
-
-    next();
+  next();
 });
 
+<<<<<<< HEAD
 app.use("/signup",router.post("/signup", signup));
 
 router.post("/signin", signin);
@@ -150,3 +156,20 @@ app.use(cors());
 http.listen(process.env.PORT, () => {
     console.log(`listening on *:${process.env.PORT}`);
 });
+=======
+app.use("/t", require("./Routes/login"));
+
+app.get('*', function(request, response) {
+    if (request.method === 'GET') {
+        const error = {
+            status: '402',
+            errMessages: "Wrong endpoint?",
+            tips: '/'
+        }
+        return response.status(402).json(error)
+    }
+});
+app.listen(process.env.PORT, () => {
+  console.log(`The application is running on ${process.env.PORT}`);
+});
+>>>>>>> ac8512b7b0b631b66a7acecd5c4633e1f7a53efb
