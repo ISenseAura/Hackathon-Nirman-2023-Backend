@@ -98,28 +98,13 @@ exports.forgetPassword = (req, res) => {
 
 exports.updateUser = (req, res) => {
   const user = firebase.auth().currentUser;
+  try{
+    users.addUser(req.body,req.body.uid);
+  }
+  catch(e){
+    throw new e;
+  }
 
-  user
-    .updateProfile({
-      displayName: req.body.username,
-      photoURL: "https://example.com/jane-q-user/profile.jpg",
-      id: req.body.id,
-      fname: req.body.fname,
-      lname: req.body.lname,
-      isStudent: req.body.isStudent,
-      isAlumni: req.body.isAlumni,
-    })
-    .then(function (data) {
-      users.addUser(req.body);
-      return res.status(200).json({ status: firebase.auth().currentUser });
-    })
-    .catch(function (error) {
-      let errorCode = error.code;
-      let errorMessage = error.message;
-      if (errorCode === "auth/too-many-requests") {
-        return res.status(500).json({ error: errorMessage });
-      }
-    });
 };
 
 exports.deleteUser = (req, res) => {

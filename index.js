@@ -15,6 +15,7 @@ const {
     forgetPassword,
     getUser,
     verifyEmail,
+    updateUser
   } = require("./routes/auth");
 
   //users.init();
@@ -45,6 +46,7 @@ app.use("/signup",router.post("/signup", signup));
 router.post("/signin", signin);
 router.post("/getuser", getUser);
 router.post("/delete", deleteUser);
+router.post("/updateuser", updateUser);
 
 app.use("/", router.post("/forget-password", forgetPassword));
 
