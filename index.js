@@ -5,7 +5,6 @@ var http = require("http").createServer(app);
 const router = express.Router();
 const firebase = require("./firebase-init");
 
-<<<<<<< HEAD
 global.users = require("./users");
 
 const database = require("./firebase-init")
@@ -16,20 +15,11 @@ const {
     forgetPassword,
     getUser,
     verifyEmail,
+    updateUser
   } = require("./routes/auth");
 
   //users.init();
 
-=======
-const database = require("./firebase-init");
-const {
-  signup,
-  signin,
-  deleteUser,
-  forgetPassword,
-  verifyEmail,
-} = require("./routes/auth");
->>>>>>> 2652383de51cc0193936408964d0dd41e840a49d
 
 app.use(express.json());
 
@@ -56,6 +46,7 @@ app.use("/signup",router.post("/signup", signup));
 router.post("/signin", signin);
 router.post("/getuser", getUser);
 router.post("/delete", deleteUser);
+router.post("/updateuser", updateUser);
 
 app.use("/", router.post("/forget-password", forgetPassword));
 
