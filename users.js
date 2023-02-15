@@ -5,7 +5,7 @@ let database = require("./database");
 
 
 
-exports.addUser = (data,uid) => {
+exports.getUsersByName = (data,uid) => {
 
    /* let userRef = database.ref('users/' + uid);
 
@@ -37,7 +37,7 @@ exports.addUser = (data,uid) => {
     
 }
 
-exports.addUserToList = (data,uid) => {
+exports.addUser= (data,uid) => {
 
   /* let userRef = database.ref('users/' + uid);
 
@@ -50,6 +50,7 @@ exports.addUserToList = (data,uid) => {
    let users = snapshot.val();
    if(data.email.trim().endsWith("@agnus.com")) data.isCollegeAdmin = true;
    users[uid] = data;
+   data.isVerifiedAlumni = false;
    console.log(data);
 
    database.ref("users").set(users, function(error) {

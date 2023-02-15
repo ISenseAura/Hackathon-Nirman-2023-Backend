@@ -159,7 +159,7 @@ exports.getUserByName = async (req, res) => {
       .then(function (snapshot) {
         let users = snapshot.val();
 
-        let name = Tools.toId(req.body.name);
+        let name = Tools.toId(req.body.query);
         console.log(name);
         let results = [];
       try {
