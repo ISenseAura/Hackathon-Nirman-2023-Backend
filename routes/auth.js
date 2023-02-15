@@ -4,6 +4,7 @@ let database = require("../database");
 // signup
 exports.signup = (req, res) => {
   if (!req.body.email || !req.body.password) {
+    console.log(req.body);
     return res.status(422).json({
       email: "email is required",
       password: "password is required",
@@ -12,8 +13,11 @@ exports.signup = (req, res) => {
   firebase
     .auth()
     .createUserWithEmailAndPassword(req.body.email, req.body.password)
-    .then((data) => {
-      this.updateUser(req,res);
+    .then((user) => {
+      req.body.uid = user.user.uid;
+      delete req.body.password;
+      users.addUser(req.body, user.user.uid);
+      return res.status(200).json({ status: user });
     })
     .catch(function (error) {
       let errorCode = error.code;
@@ -38,7 +42,8 @@ exports.signin = (req, res) => {
     .auth()
     .signInWithEmailAndPassword(req.body.email, req.body.password)
     .then((user) => {
-      return res.status(200).json(user);
+      users.addUser(req.body);
+      return res.status(200).json({ status: user });
     })
     .catch(function (error) {
       let errorCode = error.code;
@@ -91,48 +96,70 @@ exports.forgetPassword = (req, res) => {
     });
 };
 
+exports.updateUser = (req, res) => {
+  const user = firebase.auth().currentUser;
 
-exports.updateUser = (req,res) => {
-    const user = firebase.auth().currentUser;
-
-user.updateProfile({
-  displayName: req.body.username,
-  photoURL: "https://example.com/jane-q-user/profile.jpg",
-  id : req.body.id,
-  fname : req.body.fname,
-  lname : req.body.lname,
-  isStudent : req.body.isStudent,
-  isAlumni : req.body.isAlumni
-}).then(function (data) {
-
-    database.ref("users").set({[req.body.email]:req.body}, function(error) {
-        if (error) {
-          // The write failed...
-          console.log("Failed with error: " + error)
-        } else {
-          // The write was successful...
-          console.log("success")
-        }
+  user
+    .updateProfile({
+      displayName: req.body.username,
+      photoURL: "https://example.com/jane-q-user/profile.jpg",
+      id: req.body.id,
+      fname: req.body.fname,
+      lname: req.body.lname,
+      isStudent: req.body.isStudent,
+      isAlumni: req.body.isAlumni,
     })
-    return res.status(200).json({ status: firebase.auth().currentUser });
-  })
-  .catch(function (error) {
-    let errorCode = error.code;
-    let errorMessage = error.message;
-    if (errorCode === "auth/too-many-requests") {
-      return res.status(500).json({ error: errorMessage });
-    }
-  });
-}
+    .then(function (data) {
+      users.addUser(req.body);
+      return res.status(200).json({ status: firebase.auth().currentUser });
+    })
+    .catch(function (error) {
+      let errorCode = error.code;
+      let errorMessage = error.message;
+      if (errorCode === "auth/too-many-requests") {
+        return res.status(500).json({ error: errorMessage });
+      }
+    });
+};
 
+exports.deleteUser = (req, res) => {
+  const user = firebase.auth().currentUser;
 
-exports.deleteUser = (req,res) => {
-    const user = firebase.auth().currentUser;
+  user
+    .delete()
+    .then(() => {
+      req.body.uid = user.uid;
+      delete req.body.password;
+      users.deleteUser(req.body, user.uid);
+      return res.status(200).json({ status: "Deleted" });
+    })
+    .catch((error) => {
+      console.log(error);
+      res.json(400);
+    });
+};
 
-    user.delete().then(() => {
-        res.json(200);
-      }).catch((error) => {
-       res.json(400);
+exports.getUser = async (req, res) => {
+  console.log(req.body)
+  try {
+    database
+      .ref("users")
+      .once("value")
+      .then(function (snapshot) {
+        let users = snapshot.val();
+
+        let uid = req.body.uid;
+        console.log(uid);
+        if (!users[uid]) return false;
+
+        u = users[uid];
+        return res.status(200).json({ status: u });
+      })
+      .catch((e) => {
+        console.log(e);
       });
-      
-}
+  } catch (e) {
+    res.json(400);
+    throw new e();
+  }
+};

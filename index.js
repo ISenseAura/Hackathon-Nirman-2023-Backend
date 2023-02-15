@@ -5,15 +5,19 @@ var http = require('http').createServer(app);
 const router = express.Router();
 const firebase = require("./firebase-init");
 
+global.users = require("./users");
+
 const database = require("./firebase-init")
 const {
     signup,
     signin,
     deleteUser,
     forgetPassword,
+    getUser,
     verifyEmail,
   } = require("./routes/auth");
 
+  //users.init();
 
 
 app.use(express.json());
@@ -37,10 +41,10 @@ app.use(function (req, res, next) {
   next();
 });
 
-<<<<<<< HEAD
 app.use("/signup",router.post("/signup", signup));
 
 router.post("/signin", signin);
+router.post("/getuser", getUser);
 router.post("/delete", deleteUser);
 
 app.use("/",router.post("/forget-password", forgetPassword))
@@ -150,26 +154,10 @@ app.use(function (req, res, next) {
 });
 
 let cors = require("cors");
+//const { getUser } = require("./users");
 app.use(cors());
 
 
 http.listen(process.env.PORT, () => {
     console.log(`listening on *:${process.env.PORT}`);
 });
-=======
-app.use("/t", require("./Routes/login"));
-
-app.get('*', function(request, response) {
-    if (request.method === 'GET') {
-        const error = {
-            status: '402',
-            errMessages: "Wrong endpoint?",
-            tips: '/'
-        }
-        return response.status(402).json(error)
-    }
-});
-app.listen(process.env.PORT, () => {
-  console.log(`The application is running on ${process.env.PORT}`);
-});
->>>>>>> ac8512b7b0b631b66a7acecd5c4633e1f7a53efb
