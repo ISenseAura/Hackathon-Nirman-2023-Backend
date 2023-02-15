@@ -71,6 +71,10 @@ io.on('connection',(socket)=>{
     console.log(reason)
   })
 
+  socket.on('hey',(reason)=>{
+    console.log("heyyyyyyyyyyyyy")
+  })
+
   socket.on("test",() => {
     console.log("tesstt");
   })

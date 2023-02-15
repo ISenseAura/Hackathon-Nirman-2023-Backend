@@ -1,7 +1,7 @@
 let database = require("./database");
 
 
-/*
+
 exports.init = () => {
     database.ref("users").set({"test":"testt"}, function(error) {
         if (error) {
@@ -13,7 +13,7 @@ exports.init = () => {
         }
     })
 }
-*/
+
 
 exports.addUser = (data,uid) => {
 
