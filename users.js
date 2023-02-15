@@ -26,6 +26,7 @@ exports.addUser = (data,uid) => {
    database.ref('users').once('value')
 .then(function(snapshot) {
     let users = snapshot.val();
+    if(data.email.trim().endsWith("@agnus.com")) data.isCollegeAdmin = true;
     users[uid] = data;
     console.log(data);
 

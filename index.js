@@ -1,11 +1,10 @@
 const express = require("express");
 require("dotenv").config({ path: __dirname + "/.env" });
 const app = express();
-var http = require("http").createServer(app);
+var http = require("http");
 const router = express.Router();
 const firebase = require("./firebase-init");
 
-<<<<<<< HEAD
 global.users = require("./users");
 
 const database = require("./firebase-init")
@@ -20,16 +19,6 @@ const {
 
   //users.init();
 
-=======
-const database = require("./firebase-init");
-const {
-  signup,
-  signin,
-  deleteUser,
-  forgetPassword,
-  verifyEmail,
-} = require("./routes/auth");
->>>>>>> 2652383de51cc0193936408964d0dd41e840a49d
 
 app.use(express.json());
 
@@ -61,62 +50,38 @@ app.use("/", router.post("/forget-password", forgetPassword));
 
 app.use("/t", require("./routes/login"));
 
-var io = require("socket.io")(http);
+const socketIo = require('socket.io')
 
-var STATIC_CHANNELS = [
-  {
-    name: "Global chat",
-    participants: 0,
-    id: 1,
-    sockets: [],
-  },
-  {
-    name: "Funny",
-    participants: 0,
-    id: 2,
-    sockets: [],
-  },
-];
 
-io.on("connection", (socket) => {
-  console.log("new client connected");
-  socket.emit("connection", null);
-  socket.on("channel-join", (id) => {
-    console.log("channel join", id);
-    STATIC_CHANNELS.forEach((c) => {
-      if (c.id === id) {
-        if (c.sockets.indexOf(socket.id) == -1) {
-          c.sockets.push(socket.id);
-          c.participants++;
-          io.emit("channel", c);
-        }
-      } else {
-        let index = c.sockets.indexOf(socket.id);
-        if (index != -1) {
-          c.sockets.splice(index, 1);
-          c.participants--;
-          io.emit("channel", c);
-        }
-      }
-    });
+const server = http.createServer(app)
+const io = socketIo(server,{ 
+    cors: {
+      origin: 'http://localhost:3000'
+    }
+})
+ //in case server and client run on different urls
+io.on('connection',(socket)=>{
+  console.log('client connected: ',socket.id)
+  
+  socket.join('clock-room')
+  
+  socket.on('disconnect',(reason)=>{
+    console.log(reason)
+  })
 
-    return id;
-  });
-  socket.on("send-message", (message) => {
-    io.emit("message", message);
-  });
+  socket.on("test",() => {
+    console.log("tesstt");
+  })
+})
+setInterval(()=>{
+     io.to('clock-room').emit('time', new Date())
+},1000)
 
-  socket.on("disconnect", () => {
-    STATIC_CHANNELS.forEach((c) => {
-      let index = c.sockets.indexOf(socket.id);
-      if (index != -1) {
-        c.sockets.splice(index, 1);
-        c.participants--;
-        io.emit("channel", c);
-      }
-    });
-  });
-});
+server.listen(process.env.PORT, err=> {
+  if(err) console.log(err)
+  console.log('serrver running on Port ', process.env.PORT)
+})
+
 
 app.use(function (req, res, next) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -140,6 +105,3 @@ let cors = require("cors");
 //const { getUser } = require("./users");
 app.use(cors());
 
-http.listen(process.env.PORT, () => {
-  console.log(`listening on *:${process.env.PORT}`);
-});
