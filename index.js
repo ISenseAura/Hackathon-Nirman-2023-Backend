@@ -6,7 +6,7 @@ const router = express.Router();
 const firebase = require("./firebase-init");
 
 global.users = require("./users");
-
+global.Tools = require("js-helpertools");
 const database = require("./firebase-init")
 const {
     signup,
@@ -15,6 +15,8 @@ const {
     forgetPassword,
     getUser,
     verifyEmail,
+    getUserByName,
+    getUsers,
     updateUser
   } = require("./routes/auth");
 
@@ -47,10 +49,22 @@ router.post("/signin", signin);
 router.post("/getuser", getUser);
 router.post("/delete", deleteUser);
 router.post("/updateuser", updateUser);
+router.post("/searchusers", getUserByName);
+router.get("/users", getUsers);
 
 app.use("/", router.post("/forget-password", forgetPassword));
 
 app.use("/t", require("./routes/login"));
+
+
+
+
+
+
+
+
+
+
 
 const socketIo = require('socket.io')
 
@@ -61,11 +75,22 @@ const io = socketIo(server,{
       origin: 'http://localhost:3000'
     }
 })
+
+
+let sockets ={};
+
  //in case server and client run on different urls
 io.on('connection',(socket)=>{
   console.log('client connected: ',socket.id)
   
-  socket.join('clock-room')
+  socket.on("send_to",(data) => {
+    if(sockets[data.to]) sockets[data.to].emit("pm",data);
+    io.emit("newuser",{
+  event:"join",
+  msg : data.user.fname + " joined!"
+    })
+  })
+  //socket.join('clock-room')
   
   socket.on('disconnect',(reason)=>{
     console.log(reason)
@@ -75,10 +100,22 @@ io.on('connection',(socket)=>{
     console.log("heyyyyyyyyyyyyy")
   })
 
-  socket.on("test",() => {
-    console.log("tesstt");
+  socket.on("join",(data) => {
+    sockets[data.user.email.trim()] = socket;
+    console.log( data);
+    io.emit("newuser",{
+event:"join",
+msg : data.user.fname + " joined!"
+    })
   })
 })
+
+
+
+
+
+
+
 setInterval(()=>{
      io.to('clock-room').emit('time', new Date())
 },1000)

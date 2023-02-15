@@ -148,3 +148,62 @@ exports.getUser = async (req, res) => {
     throw new e();
   }
 };
+
+
+exports.getUserByName = async (req, res) => {
+  console.log(req.body)
+  try {
+    database
+      .ref("users")
+      .once("value")
+      .then(function (snapshot) {
+        let users = snapshot.val();
+
+        let name = Tools.toId(req.body.name);
+        console.log(name);
+        let results = [];
+      try {
+        let keys = Object.keys(users);
+        for(let i = 0;i < keys.length;i++) {
+          console.log(users[keys[i]])
+          let n = Tools.toId(users[keys[i]].fname + users[keys[i]].lname)
+          if(n.includes(name)) results.push(users[keys[i]]);
+
+          console.log(n);
+          console.log(results);
+        }
+      } 
+      catch(e) {
+        console.log(e)
+      }
+        return res.status(200).json({ status: results });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  } catch (e) {
+    res.json(400);
+    throw new e();
+  }
+};
+
+
+exports.getUsers = async (req, res) => {
+  console.log(req.body)
+  try {
+    database
+      .ref("users")
+      .once("value")
+      .then(function (snapshot) {
+        let users = snapshot.val();
+
+        return res.status(200).json({ users: Object.values(users) });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  } catch (e) {
+    res.json(400);
+    throw new e();
+  }
+};
