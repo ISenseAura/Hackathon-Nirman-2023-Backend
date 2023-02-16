@@ -207,3 +207,102 @@ exports.getUsers = async (req, res) => {
     throw new e();
   }
 };
+
+
+
+exports.getUsersByClg = async (req, res) => {
+  console.log(req.body)
+  try {
+    
+  database.ref('users').once('value')
+  .then(function(snapshot) {
+     let users = snapshot.val();
+  
+     let clg = Tools.toId(req.body.clg);
+    let results = [];
+  
+    let keys = Object.keys(users);
+  
+    for(let i = 0;i < keys.length;i++) {
+      let user = users[keys[i]]
+      if(clg === Tools.toId(user.cname) && !user.email.endsWith("@agnus.com")) results.push(user);
+  
+    }
+
+        return res.status(200).json({ users: results });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  } catch (e) {
+    res.json(400);
+    throw new e();
+  }
+};
+
+
+exports.verifyAlum = async (req, res) => {
+  console.log(req.body)
+  try {
+    
+  database.ref('users').once('value')
+  .then(function(snapshot) {
+     let users = snapshot.val();
+  
+     users[req.body.uid.trim()].isVerifiedAlumni = true;
+
+     database.ref("users").set(users, function(error) {
+      if (error) {
+        // The write failed...
+        console.log("Failed with error: " + error)
+      } else {
+        // The write was successful...
+        console.log("success22")
+      }
+  })
+
+    
+        return res.status(200).json({ users: users });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  } catch (e) {
+    res.json(400);
+    throw new e();
+  }
+};
+
+
+exports.declineAlum = async (req, res) => {
+  console.log(req.body)
+  try {
+    
+  database.ref('users').once('value')
+  .then(function(snapshot) {
+     let users = snapshot.val();
+  
+     users[req.body.uid.trim()].isVerifiedAlumni = false;
+     users[req.body.uid.trim()].cname = "Declined By University";
+
+     database.ref("users").set(users, function(error) {
+      if (error) {
+        // The write failed...
+        console.log("Failed with error: " + error)
+      } else {
+        // The write was successful...
+        console.log("success22")
+      }
+  })
+
+    
+        return res.status(200).json({ users: users });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  } catch (e) {
+    res.json(400);
+    throw new e();
+  }
+};

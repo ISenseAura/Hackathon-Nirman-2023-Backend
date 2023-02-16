@@ -127,3 +127,36 @@ let u;
 
    return u;
 }
+
+exports.getUsersFromClg = (data,uid) => {
+
+  /* let userRef = database.ref('users/' + uid);
+
+   userRef.child(data.uid).set({'email': data.email, 'name':data.nameg})
+
+*/
+let u;
+
+  database.ref('users').once('value')
+.then(function(snapshot) {
+   let users = snapshot.val();
+
+   let clg = Tools.toId(data.clg);
+  let results = [];
+
+  let keys = Object.keys(users);
+
+  for(let i = 0;i < keys.length;i++) {
+    let user = users[keys[i]]
+    if(clg === Tools.toId(user.cname)) results.push(user);
+
+  }
+
+
+
+}).catch((e) => {
+   console.log(e);
+})
+
+   return u;
+}

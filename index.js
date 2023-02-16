@@ -17,7 +17,10 @@ const {
     verifyEmail,
     getUserByName,
     getUsers,
-    updateUser
+    updateUser,
+    getUsersByClg,
+    verifyAlum,
+    declineAlum
   } = require("./routes/auth");
 
   //users.init();
@@ -51,6 +54,9 @@ router.post("/delete", deleteUser);
 router.post("/updateuser", updateUser);
 router.post("/searchusers", getUserByName);
 router.get("/users", getUsers);
+router.post("/usersbyclg", getUsersByClg);
+router.post("/verifyalumni", verifyAlum);
+router.post("/declinealumni", declineAlum);
 
 app.use("/", router.post("/forget-password", forgetPassword));
 
