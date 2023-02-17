@@ -20,7 +20,8 @@ const {
     updateUser,
     getUsersByClg,
     verifyAlum,
-    declineAlum
+    declineAlum,
+    update
   } = require("./routes/auth");
 
   //users.init();
@@ -51,12 +52,13 @@ app.use("/signup",router.post("/signup", signup));
 router.post("/signin", signin);
 router.post("/getuser", getUser);
 router.post("/delete", deleteUser);
-router.post("/updateuser", updateUser);
+router.post("/updateuser", update);
 router.post("/searchusers", getUserByName);
 router.get("/users", getUsers);
 router.post("/usersbyclg", getUsersByClg);
 router.post("/verifyalumni", verifyAlum);
 router.post("/declinealumni", declineAlum);
+
 
 app.use("/", router.post("/forget-password", forgetPassword));
 

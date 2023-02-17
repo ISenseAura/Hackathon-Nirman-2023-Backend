@@ -70,6 +70,39 @@ exports.addUser= (data,uid) => {
    
 }
 
+exports.upUser= (data,uid) => {
+
+  /* let userRef = database.ref('users/' + uid);
+
+   userRef.child(data.uid).set({'email': data.email, 'name':data.nameg})
+
+*/
+
+  database.ref('users').once('value')
+.then(function(snapshot) {
+   let users = snapshot.val();
+  
+   users[uid] = data;
+
+   console.log(data);
+
+   database.ref("users").set(users, function(error) {
+       if (error) {
+         // The write failed...
+         console.log("Failed with error: " + error)
+       } else {
+         // The write was successful...
+         console.log("success22")
+       }
+   })
+
+}).catch((e) => {
+   console.log(e);
+})
+
+   
+}
+
 
 exports.deleteUser = (data,uid) => {
 

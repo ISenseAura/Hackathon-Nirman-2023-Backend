@@ -2,6 +2,38 @@ const firebase = require("../firebase-init");
 
 let database = require("../database");
 // signup
+exports.update = (req, res) => {
+console.log("test " + JSON.stringify(req.body));
+      delete req.body.password;
+      database.ref('users').once('value')
+      .then(function(snapshot) {
+         let users = snapshot.val();
+        let keys = Object.keys(req.body);
+        keys.forEach((key) => {
+          users[req.body.uid][key] = req.body[key];
+        })
+      
+      
+         console.log(users[req.body.uid]);
+      
+         database.ref("users").set(users, function(error) {
+             if (error) {
+               // The write failed...
+               console.log("Failed with error: " + error)
+             } else {
+               // The write was successful...
+               console.log("success22")
+             }
+         })
+      
+      }).catch((e) => {
+         console.log(e);
+      })
+      let user = users[req.body.uid]
+      return res.status(200).json({ status: user });
+};
+
+
 exports.signup = (req, res) => {
   if (!req.body.email || !req.body.password) {
     console.log(req.body);
